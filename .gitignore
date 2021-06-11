@@ -1,0 +1,11 @@
+# Start of The Works gitignore
+bin/
+logs/
+modules/
+stage/
+zzz-*.*
+local*
+node_modules
+package-lock.json
+.bundle
+# End of The Works gitignore

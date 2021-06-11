@@ -1,0 +1,9 @@
+docker:
+  repository:
+    base: devopsnetworks
+  timezone: Australia/Melbourne
+  image:
+    name: mytoolkit
+    version: 0.0.1-pre.0
+aws:
+  region: ap-southeast-2

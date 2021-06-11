@@ -1,0 +1,10 @@
+---
+:backends: yaml
+:yaml:
+  :datadir: "/tmp/the-works-buildenv/module-1/cred/hieradata"
+:hierarchy:
+  - local
+  - common
+:logger: noop
+:merge_behavior: native
+:deep_merge_options: {}

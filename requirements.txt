@@ -1,0 +1,5 @@
+ansible==4.0.0
+awscli==1.19.91
+boto3==1.17.91
+docker-py==1.10.6
+yamllint==1.26.1

@@ -1,0 +1,11 @@
+forge 'https://forgeapi.puppetlabs.com'
+
+mod '3fs-phantomjs', '1.0.0'
+mod 'golja-gnupg', '1.2.3'
+mod 'maestrodev-wget', '1.7.3'
+mod 'puppet-archive', '5.0.0'
+mod 'puppet-nodejs', '9.0.0'
+mod 'puppetlabs-java', '7.0.2'
+mod 'puppetlabs/stdlib', '7.1.0'
+mod 'puppet-python', '6.1.0'
+mod 'stahnma-epel', '2.0.0'

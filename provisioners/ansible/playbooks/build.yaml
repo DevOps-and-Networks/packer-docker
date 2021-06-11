@@ -1,0 +1,32 @@
+---
+
+- name: Build the Docker image
+  hosts: all
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: Create logs folder
+      file:
+        path: ../../../logs/
+        state: directory
+
+    - name: Create artifacts-publisher folder
+      file:
+        path: ../../../stage/artifacts-publisher
+        state: directory
+      when: image_type == 'publisher'
+
+    - name: Build the docker image
+      shell: "PACKER_LOG_PATH=logs/{{ docker.image.name }}-{{ image_type }}.log \
+                              PACKER_LOG=1 \
+                              packer build \
+                              -var 'version={{ docker.image.version }}' \
+                              -var 'image_name={{ docker.image.name }}' \
+                              -var 'repository={{ docker.repository[image_type] }}' \
+                              -var 'repository_base={{ docker.repository['base'] }}' \
+                              -var 'timezone={{ docker.timezone }}' \
+                              templates/docker-{{ image_type }}.json"
+      args:
+        executable: /bin/bash
+        chdir: "../../../"
