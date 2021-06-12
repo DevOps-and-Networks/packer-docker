@@ -50,6 +50,7 @@ class { 'python':
   ensure     => 'present',
   dev        => 'present',
   pip        => 'present',
+  version    => '3.8',
 }
 
 exec { 'pip3 install --upgrade pip==21.1.2':
@@ -57,7 +58,19 @@ exec { 'pip3 install --upgrade pip==21.1.2':
 } -> package{ 'awscli':
   ensure   => '1.19.91',
   provider => pip3,
-} 
+} -> package{ 'ansible':
+  ensure   => '4.0.0',
+  provider => pip3,
+} -> package{ 'boto3':
+  ensure   => '1.17.91',
+  provider => pip3,
+} -> package{ 'yamllint':
+  ensure   => '1.26.1',
+  provider => pip3,
+} -> package{ 'docker-py':
+  ensure   => '1.10.6',
+  provider => pip3,
+}
 
 
 file { '/home/.virtualenvs':
