@@ -2,6 +2,10 @@
 set -o nounset
 set -o errexit
 
+# Fix a bug in Centos 8  Update
+sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
 rpm -ivh --force https://yum.puppetlabs.com/puppet7/puppet7-release-el-8.noarch.rpm
 yum -y install puppet-agent-7.7.0 pdk-2.1.0.0 epel-release
 yum -y groupinstall 'Development Tools'

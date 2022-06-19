@@ -1,9 +1,9 @@
 docker:
   repository:
-    base: devopsnetworks
+    base: tpcloud
   timezone: Australia/Melbourne
   image:
-    name: mytoolkit
-    version: 0.0.1-pre.0
+    name: extra_tools
+    version: 0.0.1
 aws:
   region: ap-southeast-2
