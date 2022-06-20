@@ -5,5 +5,5 @@ pipelines:
     main:
       - step:
          script:
+           - make deps
            - aws sts get-caller-identity
-           
