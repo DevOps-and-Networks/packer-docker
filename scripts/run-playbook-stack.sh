@@ -25,6 +25,6 @@ echo "  ${extra_vars[*]}"
 
 ANSIBLE_CONFIG=conf/ansible/ansible.cfg \
   ansible-playbook "provisioners/ansible/playbooks/${playbook_type}.yaml" \
-  -i conf/ansible/inventory/hosts \
+  -i conf/ansible/inventory/hosts -vvv \
   --module-path provisioners/ansible/library/ \
   "${extra_vars[@]}"
