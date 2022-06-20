@@ -1,5 +1,6 @@
 clone:
   depth: full
+image: python:3.7.2
 pipelines:
   branches:
     main:
