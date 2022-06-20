@@ -11,5 +11,6 @@ pipelines:
         script:
          - make deps
          - aws sts get-caller-identity
+         - make deps
          - make build-docker-base
          - make publish-docker-base

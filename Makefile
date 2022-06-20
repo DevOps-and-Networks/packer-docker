@@ -7,9 +7,9 @@ init:
 	mkdir -p artifacts
 
 deps:
-	# gem install bundler --version=1.17.3
-	# bundle install -j4
-	# r10k puppetfile install --moduledir modules --verbose
+	gem install bundler --version=1.17.3
+	bundle install -j4
+	r10k puppetfile install --moduledir modules --verbose
 	pip install -r requirements.txt
 
 lint:
