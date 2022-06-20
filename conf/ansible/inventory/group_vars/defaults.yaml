@@ -1,6 +1,6 @@
 docker:
   repository:
-    base: tpcloud
+    base: tp-devops
   timezone: Australia/Melbourne
   image:
     name: extra_tools

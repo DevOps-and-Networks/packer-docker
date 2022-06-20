@@ -1,6 +1,6 @@
 ---
 image:
-  name: 583812563872.dkr.ecr.ap-southeast-2.amazonaws.com/packer:latest
+  name: 583812563872.dkr.ecr.ap-southeast-2.amazonaws.com/linux-packer:latest
   aws:
       access-key: $AWS_ACCESS_KEY_ID
       secret-key: $AWS_SECRET_ACCESS_KEY
