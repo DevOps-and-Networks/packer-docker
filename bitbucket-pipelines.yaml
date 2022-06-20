@@ -5,4 +5,5 @@ pipelines:
     main:
       - step:
          script:
-           - aws s3 ls
+           - aws sts get-caller-identity
+           
