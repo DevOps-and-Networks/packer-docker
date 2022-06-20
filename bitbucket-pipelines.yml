@@ -5,6 +5,6 @@ pipelines:
     main:
       - step:
          script:
-           - python --version
+           - python3 --version
            - make deps
            - aws sts get-caller-identity
