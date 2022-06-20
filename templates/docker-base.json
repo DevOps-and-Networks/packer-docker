@@ -68,18 +68,6 @@
       "type": "file",
       "source": "templates/python/python_prometheus.py",
       "destination": "/bin/python_prometheus.py"
-    },
-    {
-      "type": "puppet-masterless",
-      "prevent_sudo": true,
-      "puppet_bin_dir": "/opt/puppetlabs/bin/",
-      "hiera_config_path": "conf/hiera.yaml",
-      "extra_arguments": "--debug",
-      "staging_directory": "/tmp/{{user `image_name`}}/",
-      "manifest_file": "provisioners/extra_tools.pp",
-      "module_paths": [
-        "modules"
-      ]
     }
   ],
   "post-processors": [
