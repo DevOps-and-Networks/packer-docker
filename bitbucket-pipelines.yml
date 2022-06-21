@@ -10,6 +10,8 @@ pipelines:
   default:
     -
       step:
+        services:
+         - docker
         script:
          - mkdir ~/.aws/
          - touch ~/.aws/credentials
