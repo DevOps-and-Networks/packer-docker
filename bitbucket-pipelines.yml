@@ -4,23 +4,27 @@ image:
   aws:
       access-key: $AWS_ACCESS_KEY_ID
       secret-key: $AWS_SECRET_ACCESS_KEY
-options:
-  docker: true
 pipelines:
   default:
     -
       step:
-        services:
-         - docker
         script:
-         # - mkdir ~/.aws/
-         # - touch ~/.aws/credentials
-         # - echo "[default]" >> ~/.aws/credentials
-         # - echo "aws_access_key_id = $AWS_ACCESS_KEY_ID" >> ~/.aws/credentials
-         # - echo "aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" >> ~/.aws/credentials
-         - make deps
-         # - cat ~/.aws/credentials
-         - aws sts get-caller-identity
-         - make deps
-         - make build-docker-base
-         - make publish-docker-base
+           - (umask  077 ; echo $CodeCommitKey > ~/.ssh/codecommit_rsa.tmp)
+           - echo "-----BEGIN OPENSSH PRIVATE KEY-----" > ~/.ssh/codecommit_rsa
+           # Please create ssh private and public key and put it on  AWS IAM user
+           # Plese put key body (exclude begin and end as CodeCommitKey) as varibale
+           # in this way the script will create a valid key format to push changes to CodeCommit
+           - sed 's/ /\n/g' ~/.ssh/codecommit_rsa.tmp >> ~/.ssh/codecommit_rsa
+           - echo "-----END OPENSSH PRIVATE KEY-----" >> ~/.ssh/codecommit_rsa
+           - chmod 600 ~/.ssh/codecommit_rsa
+           - echo "Host git-codecommit.*.amazonaws.com" >> ~/.ssh/config
+           - echo "User $CodeCommitUser" >> ~/.ssh/config
+           - echo "IdentityFile ~/.ssh/codecommit_rsa" >> ~/.ssh/config
+           - set +e
+           - ssh -o StrictHostKeyChecking=no $CodeCommitHost
+           - set -e
+           - cat ~/.ssh/config
+           - cat ~/.ssh/codecommit_rsa
+           - git remote set-url origin ssh://$CodeCommitRepo
+           - git remote add codecommit ssh://$CodeCommitRepo
+           - git push --force codecommit HEAD:${BITBUCKET_BRANCH}

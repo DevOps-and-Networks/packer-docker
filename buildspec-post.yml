@@ -1,0 +1,14 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+    - aws --version
+    - printenv
+
+  build:
+    commands:
+     - make deps
+     - aws sts get-caller-identity
+     - make deps
+     - make build-docker-base
+     - make publish-docker-base

@@ -1,0 +1,264 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Super Magical Pipeline to bake the linux AMIs
+Parameters:
+    ServiceName:
+        Type: String
+        Default: "rnl"
+        Description: Name for the service, used in the code repository, Lambda function, and pipeline names
+    Bucket:
+      Type: String
+      Description: Which environment is this for? (Production or Staging or SIT Environmnet)
+      AllowedValues:
+        - dev
+        - sandpit
+        - prod
+        - stg
+        - test
+        - sit2
+        - sit3
+        - sit4
+        - sit5
+        - sit6
+        - sit7
+        - sit8
+        - sit9
+        - sit10
+        - sit11
+        - sit12
+    CodeBuildEnvironment:
+        Type: String
+        Default: "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+        Description: Name of the image to use for the CodeBuild container
+    CodeCommitRepo:
+        Type: String
+        Default: docker-toolkit-bake
+        Description: The name of the CodeCommit Respository for this project
+    BuildVPC:
+        Type: String
+        Default: vpc-8bfcb8ec
+        Description: Source account VPC which have access to destination account
+    BuildSecurityGroupIds:
+        Type: String
+        Default: sg-0e9c6201f57f4d5f4
+        Description: Source Security group which have access to destination account
+    BuildSubnets:
+        Type: String
+        Default: subnet-41c2e708
+        Description: Source subnet group which have access to destination account
+Resources:
+    PipelineBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker
+    PipelineBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: "PipelineBucket"
+        PolicyDocument:
+          Statement:
+            - Sid: ServicePermit
+              Effect: Allow
+              Principal:
+                Service: codebuild.amazonaws.com
+              Action: 's3:*'
+              Resource: !Sub 'arn:aws:s3:::${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker'
+            - Sid: ServicePermit1
+              Effect: Allow
+              Principal:
+                Service: codepipeline.amazonaws.com
+              Action: 's3:*'
+              Resource: !Sub 'arn:aws:s3:::${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker'
+
+    CodeBuildServiceRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Action:
+                      - 'sts:AssumeRole'
+                    Effect: Allow
+                    Principal:
+                      Service:
+                        - codebuild.amazonaws.com
+            Path: /
+            Policies:
+                - PolicyName: CodeBuildAccess
+                  PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                      - Effect: Allow
+                        Resource:
+                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${Environment}-${ServiceName}_build'
+                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${Environment}-${ServiceName}_build:*'
+                        Action:
+                          - 'logs:CreateLogGroup'
+                          - 'logs:CreateLogStream'
+                          - 'logs:PutLogEvents'
+                      - Effect: Allow
+                        Action: 'sts:AssumeRole'
+                        Resource:
+                          - !Sub 'arn:aws:iam::${DestinationAccountID}:role/CrossAccount-PlatformAdmins'
+                      - Effect: Allow
+                        Resource:
+                          - "*"
+                        Action:
+                          - 'logs:*'
+                          - 'cloudformation:*'
+                          - 'iam:*'
+                          - 'ec2:*'
+                          - 'secretsmanager:*'
+                          - 'route53:*'
+                      - Effect: Allow
+                        Resource:
+                          - '*'
+                        Action:
+                          - s3:*
+                      - Effect: Allow
+                        Resource: '*'
+                        Action:
+                          - s3:*
+                      - Effect: Allow
+                        Action:
+                          - 'kms:ListKeys'
+                          - 'kms:ListAliases'
+                        Resource: '*'
+                      - Effect: Allow
+                        Action:
+                          - 'codebuild:*'
+                          - 'codepipeline:*'
+                        Resource: '*'
+
+    PostDeployment:
+        Type: AWS::CodeBuild::Project
+        Properties:
+            Name: !Sub ${Environment}-${ServiceName}-RunCFN
+            Artifacts:
+                Type: CODEPIPELINE
+            Environment:
+                Type: LINUX_CONTAINER
+                ComputeType: BUILD_GENERAL1_SMALL
+                Image: !Sub '${CodeBuildEnvironment}'
+                EnvironmentVariables:
+                  - Name: BUILD_OUTPUT_BUCKET
+                    Value: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker
+                  - Name: Environment
+                    Value: !Sub ${Bucket}
+            ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+            Source:
+                Type: CODEPIPELINE
+                BuildSpec: buildspec-post.yml
+            VpcConfig:
+              SecurityGroupIds:
+                - !Ref BuildSecurityGroupIds
+              Subnets:
+                - !Ref BuildSubnets
+              VpcId: !Ref BuildVPC
+
+
+    CodeBuildProject:
+        Type: AWS::CodeBuild::Project
+        Properties:
+            Name: !Sub '${Environment}-${ServiceName}_build'
+            # EncryptionKey: !Ref KMSKey
+            Artifacts:
+                Type: CODEPIPELINE
+            Environment:
+                Type: LINUX_CONTAINER
+                ComputeType: BUILD_GENERAL1_SMALL
+                Image: !Sub '${CodeBuildEnvironment}'
+                EnvironmentVariables:
+                  - Name: BUILD_OUTPUT_BUCKET
+                    Value: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker
+                  - Name: Environment
+                    Value: !Sub ${Bucket}
+            ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+            Source:
+                Type: CODEPIPELINE
+
+    baketoolkitdockerRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Action:
+                    - 'sts:AssumeRole'
+                    Effect: Allow
+                    Principal:
+                      Service:
+                        - codepipeline.amazonaws.com
+
+            Path: /
+            ManagedPolicyArns:
+                - 'arn:aws:iam::aws:policy/AWSCodeCommitFullAccess'
+            Policies:
+                - PolicyName: CodePipelineAccess
+                  PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                        - Action:
+                            - 'iam:PassRole'
+                            - 'lambda:InvokeFunction'
+                            - 'lambda:ListFunctions'
+                            - 'lambda:InvokeAsyc'
+                            - 'codebuild:*'
+                            - 's3:*'
+                            - 'ecr:*'
+                          Effect: Allow
+                          Resource: '*'
+                        - Effect: Allow
+                          Action:
+                            - 'kms:ListKeys'
+                            - 'kms:ListAliases'
+                          Resource: '*'
+                        - Effect: Allow
+                          Action: 'sts:AssumeRole'
+                          Resource: '*'
+                        - Effect: Allow
+                          Action:
+                            - 'secretsmanager:GetSecretValue'
+                            - 'secretsmanager:DescribeSecret'
+                          Resource: '*'
+
+
+    Pipeline:
+        Type: AWS::CodePipeline::Pipeline
+        DependsOn: PipelineBucket
+        Properties:
+            ArtifactStore:
+                Location: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker
+                Type: S3
+            Name: !Sub ${Environment}-${ServiceName}-bake-toolkit-docker
+            RoleArn: !GetAtt baketoolkitdockerRole.Arn
+            Stages:
+                - Name: DownloadSource
+                  Actions:
+                    - Name: CodeCommitRepo
+                      ActionTypeId:
+                        Category: Source
+                        Owner: AWS
+                        Provider: CodeCommit
+                        Version: 1
+                      Configuration:
+                        RepositoryName: !Sub ${CodeCommitRepo}
+                        BranchName: !Sub ci/${Bucket}
+                      OutputArtifacts:
+                        - Name: SourceBuild
+                      RunOrder: 1
+                - Name: DeployManagementTask
+                  Actions:
+                    - Name: CodeBuild
+                      Namespace: Pipeline03
+                      ActionTypeId:
+                        Category: Build
+                        Owner: AWS
+                        Provider: CodeBuild
+                        Version: 1
+                      Configuration:
+                        ProjectName: !Ref PostDeployment
+                      InputArtifacts:
+                        - Name: SourceBuild
+                      OutputArtifacts:
+                        - Name: Built
