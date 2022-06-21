@@ -12,6 +12,7 @@
       "image": "583812563872.dkr.ecr.ap-southeast-2.amazonaws.com/linux-packer:centos",
       "commit": true,
       "aws_profile": "default",
+      "login_server": "https://583812563872.dkr.ecr.ap-southeast-2.amazonaws.com",
       "run_command": [
         "--privileged",
         "-e",
