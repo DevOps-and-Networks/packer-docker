@@ -27,7 +27,7 @@ Parameters:
         - sit12
     CodeBuildEnvironment:
         Type: String
-        Default: "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+        Default: "583812563872.dkr.ecr.ap-southeast-2.amazonaws.com/linux-packer:latest"
         Description: Name of the image to use for the CodeBuild container
     CodeCommitRepo:
         Type: String
