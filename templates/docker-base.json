@@ -8,6 +8,7 @@
   "builders": [
     {
       "type": "docker",
+      "pull": true,
       "image": "centos:centos8",
       "commit": true,
       "run_command": [
