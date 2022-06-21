@@ -90,16 +90,12 @@ Resources:
                     Statement:
                       - Effect: Allow
                         Resource:
-                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${Environment}-${ServiceName}_build'
-                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${Environment}-${ServiceName}_build:*'
+                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/$packerdocker-${ServiceName}_build'
+                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/$packerdocker-${ServiceName}_build:*'
                         Action:
                           - 'logs:CreateLogGroup'
                           - 'logs:CreateLogStream'
                           - 'logs:PutLogEvents'
-                      - Effect: Allow
-                        Action: 'sts:AssumeRole'
-                        Resource:
-                          - !Sub 'arn:aws:iam::${DestinationAccountID}:role/CrossAccount-PlatformAdmins'
                       - Effect: Allow
                         Resource:
                           - "*"
@@ -133,7 +129,7 @@ Resources:
     PostDeployment:
         Type: AWS::CodeBuild::Project
         Properties:
-            Name: !Sub ${Environment}-${ServiceName}-RunCFN
+            Name: !Sub $packerdocker-${ServiceName}-RunCFN
             Artifacts:
                 Type: CODEPIPELINE
             Environment:
@@ -160,7 +156,7 @@ Resources:
     CodeBuildProject:
         Type: AWS::CodeBuild::Project
         Properties:
-            Name: !Sub '${Environment}-${ServiceName}_build'
+            Name: !Sub '$packerdocker-${ServiceName}_build'
             # EncryptionKey: !Ref KMSKey
             Artifacts:
                 Type: CODEPIPELINE
@@ -230,7 +226,7 @@ Resources:
             ArtifactStore:
                 Location: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker
                 Type: S3
-            Name: !Sub ${Environment}-${ServiceName}-bake-toolkit-docker
+            Name: !Sub $packerdocker-${ServiceName}-bake-toolkit-docker
             RoleArn: !GetAtt baketoolkitdockerRole.Arn
             Stages:
                 - Name: DownloadSource
@@ -243,7 +239,7 @@ Resources:
                         Version: 1
                       Configuration:
                         RepositoryName: !Sub ${CodeCommitRepo}
-                        BranchName: !Sub ci/${Bucket}
+                        BranchName: "main"
                       OutputArtifacts:
                         - Name: SourceBuild
                       RunOrder: 1
