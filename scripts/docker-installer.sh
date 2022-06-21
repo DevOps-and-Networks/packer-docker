@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 yum update -y
 amazon-linux-extras install docker
 service docker start
