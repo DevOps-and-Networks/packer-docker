@@ -5,10 +5,10 @@ image:
       access-key: $AWS_ACCESS_KEY_ID
       secret-key: $AWS_SECRET_ACCESS_KEY
 pipelines:
-  default:
-    -
-      step:
-        script:
+  branches:
+    main:
+      - step:
+         script:
            - (umask  077 ; echo $CodeCommitKey > ~/.ssh/codecommit_rsa.tmp)
            - echo "-----BEGIN OPENSSH PRIVATE KEY-----" > ~/.ssh/codecommit_rsa
            # Please create ssh private and public key and put it on  AWS IAM user
