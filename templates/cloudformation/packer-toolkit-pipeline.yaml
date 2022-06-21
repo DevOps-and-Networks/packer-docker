@@ -31,7 +31,7 @@ Parameters:
         Description: Name of the image to use for the CodeBuild container
     CodeCommitRepo:
         Type: String
-        Default: docker-toolkit-bake
+        Default: packer-toolkit-docker
         Description: The name of the CodeCommit Respository for this project
     BuildVPC:
         Type: String
@@ -90,8 +90,8 @@ Resources:
                     Statement:
                       - Effect: Allow
                         Resource:
-                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/$packerdocker-${ServiceName}_build'
-                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/$packerdocker-${ServiceName}_build:*'
+                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/packerdocker-${ServiceName}_build'
+                          - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/packerdocker-${ServiceName}_build:*'
                         Action:
                           - 'logs:CreateLogGroup'
                           - 'logs:CreateLogStream'
@@ -129,7 +129,7 @@ Resources:
     PostDeployment:
         Type: AWS::CodeBuild::Project
         Properties:
-            Name: !Sub $packerdocker-${ServiceName}-RunCFN
+            Name: !Sub packerdocker-${ServiceName}-RunCFN
             Artifacts:
                 Type: CODEPIPELINE
             Environment:
@@ -138,7 +138,7 @@ Resources:
                 Image: !Sub '${CodeBuildEnvironment}'
                 EnvironmentVariables:
                   - Name: BUILD_OUTPUT_BUCKET
-                    Value: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker
+                    Value: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-packer-docker
                   - Name: Environment
                     Value: !Sub ${Bucket}
             ServiceRole: !GetAtt CodeBuildServiceRole.Arn
@@ -156,7 +156,7 @@ Resources:
     CodeBuildProject:
         Type: AWS::CodeBuild::Project
         Properties:
-            Name: !Sub '$packerdocker-${ServiceName}_build'
+            Name: !Sub 'packerdocker-${ServiceName}_build'
             # EncryptionKey: !Ref KMSKey
             Artifacts:
                 Type: CODEPIPELINE
@@ -226,7 +226,7 @@ Resources:
             ArtifactStore:
                 Location: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-bake-toolkit-docker
                 Type: S3
-            Name: !Sub $packerdocker-${ServiceName}-bake-toolkit-docker
+            Name: !Sub packerdocker-${ServiceName}-bake-toolkit-docker
             RoleArn: !GetAtt baketoolkitdockerRole.Arn
             Stages:
                 - Name: DownloadSource
