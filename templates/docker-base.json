@@ -8,11 +8,8 @@
   "builders": [
     {
       "type": "docker",
-      "ecr_login": true,
       "image": " centos:centos8",
       "commit": true,
-      "aws_profile": "default",
-      "login_server": "https://583812563872.dkr.ecr.ap-southeast-2.amazonaws.com",
       "run_command": [
         "--privileged",
         "-e",
