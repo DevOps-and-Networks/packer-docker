@@ -136,6 +136,7 @@ Resources:
                 Type: LINUX_CONTAINER
                 ComputeType: BUILD_GENERAL1_SMALL
                 Image: !Sub '${CodeBuildEnvironment}'
+                PrivilegedMode: true
                 EnvironmentVariables:
                   - Name: BUILD_OUTPUT_BUCKET
                     Value: !Sub ${AWS::AccountId}-${Bucket}-${ServiceName}-packer-docker
