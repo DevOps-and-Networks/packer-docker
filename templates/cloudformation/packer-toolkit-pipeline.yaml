@@ -104,6 +104,7 @@ Resources:
                           - 'cloudformation:*'
                           - 'iam:*'
                           - 'ec2:*'
+                          - 'ecr:*'
                           - 'secretsmanager:*'
                           - 'route53:*'
                       - Effect: Allow
