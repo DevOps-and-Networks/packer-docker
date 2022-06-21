@@ -11,6 +11,7 @@ deps:
 	bundle install -j4
 	r10k puppetfile install --moduledir modules --verbose
 	pip3 install -r requirements.txt
+	docker pull centos:centos8
 
 lint:
 	yamllint \
