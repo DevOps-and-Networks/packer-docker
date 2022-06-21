@@ -8,8 +8,7 @@ init:
 
 deps:
 	gem install bundler --version=1.17.3
-	# bundle install -j4
-	# r10k puppetfile install --moduledir modules --verbose
+	bundle install -j4
 	pip3 install -r requirements.txt
 	docker pull centos:centos8
 
