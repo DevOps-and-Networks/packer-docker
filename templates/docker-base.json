@@ -8,8 +8,8 @@
   "builders": [
     {
       "type": "docker",
-      "pull": false,
-      "image": "centos",
+      "ecr_login": true,
+      "image": "583812563872.dkr.ecr.ap-southeast-2.amazonaws.com/linux-packer:centos",
       "commit": true,
       "run_command": [
         "--privileged",
@@ -28,13 +28,6 @@
         "ENV TZ {{user `timezone`}}",
         "ENV PATH /opt/puppetlabs/puppet/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       ]
-    }
-  ],
-  "post-processors": [
-    {
-        "force": true,
-        "repository":"centos",
-        "type": "centos8"
     }
   ],
   "provisioners": [
