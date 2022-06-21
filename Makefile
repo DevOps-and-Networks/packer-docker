@@ -11,6 +11,7 @@ deps:
 	bundle install -j4
 	pip3 install -r requirements.txt
 	docker pull centos:centos8
+	scripts/docker-installer.sh
 
 lint:
 	yamllint \
