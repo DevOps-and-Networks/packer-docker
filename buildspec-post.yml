@@ -11,8 +11,6 @@ phases:
 
   build:
     commands:
-     - make deps
-     - aws sts get-caller-identity
-     - make deps
+     - go get github.com/hashicorp/packer
      - make build-docker-base
      - make publish-docker-base
