@@ -28,5 +28,5 @@
                               -var 'timezone={{ docker.timezone }}' \
                               templates/docker-{{ image_type }}.json"
       args:
-        executable: /usr/local/bin/packer
+        # executable: /usr/local/bin/packer
         chdir: "../../../"
