@@ -12,6 +12,5 @@ phases:
       - mv packer /usr/local/bin/.
   build:
     commands:
-     - go get github.com/hashicorp/packer
      - make build-docker-base
      - make publish-docker-base
