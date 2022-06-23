@@ -12,5 +12,6 @@ phases:
       - mv packer /usr/local/bin/.
   build:
     commands:
+     - make deps
      - make build-docker-base
      - make publish-docker-base
