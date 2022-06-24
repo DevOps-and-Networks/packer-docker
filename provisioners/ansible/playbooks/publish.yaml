@@ -6,25 +6,9 @@
   connection: local
 
   tasks:
-    - set_fact:
-        images_name_suffix: "{{ '' if (image_type == 'base') else '-'+image_type }}"
 
-    - name: Login to repository for AWS ECR for pushing the Docker image
-      shell: "$(aws ecr get-login --region {{ aws.region }} --no-include-email)"
-      args:
-        executable: /bin/bash
-      when: docker.repository[image_type].find('amazonaws.com') != -1
-
-    - name: Publish the Docker image with version tag
-      docker_image:
-        name: "{{ docker.repository[image_type] }}/{{ docker.image.name }}{{ images_name_suffix }}"
-        tag: "{{ docker.image.version }}"
-        source: local
-        push: true
+    - name: Tagging the docker image
+      ansible.builtin.shell: 'docker tag {{ docker.repository.base }}/{{ docker.image.name }}:latest 583812563872.dkr.ecr.ap-southeast-2.amazonaws.com/{{ docker.repository.base }}:{{docker.image.name}}'
 
     - name: Publish the Docker image with latest tag
-      docker_image:
-        name: "{{ docker.repository[image_type] }}/{{ docker.image.name }}{{ images_name_suffix }}"
-        tag: latest
-        source: local
-        push: true
+      ansible.builtin.shell: "docker push 583812563872.dkr.ecr.ap-southeast-2.amazonaws.com/{{ docker.repository.base }}:{{ docker.image.name }}"
