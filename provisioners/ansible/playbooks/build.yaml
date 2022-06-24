@@ -17,6 +17,12 @@
         state: directory
       when: image_type == 'publisher'
 
+    - name: init the packer
+      ansible.builtin.shell: "packer init templates/docker-{{ image_type }}.json.pkr.hcl"
+      args:
+        # executable: /usr/local/bin/packer
+        chdir: "../../../"
+
     - name: Build the docker image
       ansible.builtin.shell: "PACKER_LOG_PATH=logs/{{ docker.image.name }}-{{ image_type }}.log \
                               PACKER_LOG=1 \
@@ -24,9 +30,8 @@
                               -var 'version={{ docker.image.version }}' \
                               -var 'image_name={{ docker.image.name }}' \
                               -var 'repository={{ docker.repository[image_type] }}' \
-                              -var 'repository_base={{ docker.repository['base'] }}' \
                               -var 'timezone={{ docker.timezone }}' \
-                              templates/docker-{{ image_type }}.json"
+                              templates/docker-{{ image_type }}.json.pkr.hcl"
       args:
         # executable: /usr/local/bin/packer
         chdir: "../../../"
