@@ -100,15 +100,6 @@ build {
     source      = "templates/python/python_prometheus.py"
   }
 
-  provisioner "puppet-masterless" {
-    extra_arguments   = ["--debug"]
-    hiera_config_path = "conf/hiera.yaml"
-    manifest_file     = "provisioners/extra_tools.pp"
-    module_paths      = ["modules"]
-    prevent_sudo      = true
-    puppet_bin_dir    = "/opt/puppetlabs/bin/"
-    staging_directory = "/tmp/${var.image_name}/"
-  }
 
   post-processor "docker-tag" {
     only       = ["docker"]
