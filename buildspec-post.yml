@@ -7,9 +7,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      # - wget https://releases.hashicorp.com/packer/1.8.1/packer_1.8.1_linux_amd64.zip
-      # - unzip packer_1.8.1_linux_amd64.zip
-      # - mv packer /usr/local/bin/.
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   build:
     commands:
      - make deps

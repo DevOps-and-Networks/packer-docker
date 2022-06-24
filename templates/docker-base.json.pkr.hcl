@@ -21,10 +21,6 @@ packer {
       version = ">= 0.0.7"
       source = "github.com/hashicorp/docker"
     }
-    puppet = {
-      version = ">= 1.0.0"
-      source  = "github.com/hashicorp/puppet"
-    }
   }
 }
 
