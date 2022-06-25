@@ -96,15 +96,9 @@ build {
     source      = "templates/python/python_prometheus.py"
   }
 
-
   post-processor "docker-tag" {
-    only       = ["docker"]
     repository = "${var.repository}/${var.image_name}"
-    tag        = "latest"
+    tags = [${var.version}, "latest"]
   }
-  post-processor "docker-tag" {
-    only       = ["docker"]
-    repository = "${var.repository}/${var.image_name}"
-    tag        = "${var.version}"
-  }
+  
 }
