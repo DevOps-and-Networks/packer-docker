@@ -98,7 +98,7 @@ build {
 
   post-processor "docker-tag" {
     repository = "${var.repository}/${var.image_name}"
-    tags = [${var.version}, "latest"]
+    tags = [ "${var.version}" , "latest"]
   }
-  
+
 }
