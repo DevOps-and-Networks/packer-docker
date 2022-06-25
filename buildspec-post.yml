@@ -12,4 +12,5 @@ phases:
     commands:
      - make deps
      - make build-docker-base
+     - docker images
      - make publish-docker-base
