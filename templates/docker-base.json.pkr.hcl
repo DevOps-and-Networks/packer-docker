@@ -81,6 +81,14 @@ build {
     script = "provisioners/install_kubectl.sh"
   }
 
+  provisioner "shell" {
+    script = "provisioners/install_nodejs.sh"
+  }
+
+  provisioner "shell" {
+    script = "provisioners/npm_installs.sh"
+  }
+
   provisioner "file" {
     destination = "/bin/exporter.sh"
     source      = "templates/bash/python_prometheus.sh"
